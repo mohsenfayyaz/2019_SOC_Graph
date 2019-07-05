@@ -141,7 +141,7 @@ class Graph:
         # Need to create a layout when doing
         # separate calls to draw nodes and edges
         pos = nx.circular_layout(G)
-        nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_color='#73F4EA', node_size=5000, node_shape="5")
+        nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_color='#73F4EA', node_size=5000, node_shape="s")
         nx.draw_networkx_labels(G, pos)
         nx.draw_networkx_edges(G, pos, edgelist=red_edges, edge_color="r", arrows=True, width=4, alpha=0.5)
         nx.draw_networkx_edges(G, pos, edgelist=black_edges, arrows=True)
