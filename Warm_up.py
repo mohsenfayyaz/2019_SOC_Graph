@@ -90,14 +90,21 @@ class Graph:
 
     def find_hamilton_path(self):
         hamilton_path_team_names = [next(iter(self.games_graph))]
+        first_for = True
         for new_team_name, to_teams in self.games_graph.items():
+            if first_for:
+                first_for = False
+                continue
+            print(hamilton_path_team_names)
             v1 = hamilton_path_team_names[0]
             vn = hamilton_path_team_names[-1]
             if v1 in to_teams:  # Edge From new node to v1 -> add new v in the beginning of path
                 hamilton_path_team_names.insert(0, new_team_name)
+                print(new_team_name, "aaaa")
                 continue
             if new_team_name in self.games_graph[vn]:  # Edge From vn to new node -> add new v in the end of path
                 hamilton_path_team_names.append(new_team_name)
+                print(new_team_name, "bbbb")
                 continue
 
             path_index = dict()
@@ -115,6 +122,9 @@ class Graph:
         self.hamilton_path_team_names = hamilton_path_team_names
         print(hamilton_path_team_names)
 
+    def truncate(self, s):
+        return (s[:9] + '.') if len(s) > 9 else s
+
     def draw_graph(self):
         # ------- DIRECTED
 
@@ -123,16 +133,14 @@ class Graph:
         edges = list()
         for team_name, to_teams in self.games_graph.items():
             for to_team_name in to_teams:
-
-                edges.append((team_name, to_team_name))
+                edges.append((self.truncate(team_name), self.truncate(to_team_name)))
 
         red_edges = list()
         old_team_name = None
         for team_name in self.hamilton_path_team_names:
             if old_team_name is not None:
-                red_edges.append((old_team_name, team_name))
+                red_edges.append((self.truncate(old_team_name), self.truncate(team_name)))
             old_team_name = team_name
-
 
         G = nx.DiGraph()
         G.add_edges_from(edges)
@@ -141,10 +149,15 @@ class Graph:
         # Need to create a layout when doing
         # separate calls to draw nodes and edges
         pos = nx.circular_layout(G)
-        nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_color='#73F4EA', node_size=5000, node_shape="s")
+        nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_color='#73F4EA', node_size=4000, node_shape="o")
+        nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_color='#FFF671', node_size=4000, node_shape="o",
+                               nodelist=[self.truncate(self.hamilton_path_team_names[0])])
+        nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_color='#FFF671', node_size=4000, node_shape="o",
+                               nodelist=[self.truncate(self.hamilton_path_team_names[-1])])
+
         nx.draw_networkx_labels(G, pos)
         nx.draw_networkx_edges(G, pos, edgelist=red_edges, edge_color="r", arrows=True, width=4, alpha=0.5)
-        nx.draw_networkx_edges(G, pos, edgelist=black_edges, arrows=True)
+        nx.draw_networkx_edges(G, pos, edgelist=black_edges, arrows=True, alpha=0.9)
         plt.show()
 
 
