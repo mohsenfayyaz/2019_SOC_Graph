@@ -62,9 +62,10 @@ class Graph:
             lhs_name = game[0]
             rhs_name = game[2]
             lscore = game[1].split()[0]
-            rscore = game[1].split()[0]
-            if lscore >= rscore:
-                self.add_edge(rhs_name, lhs_name)  # From LOSER to WINNER
+            rscore = game[1].split()[2]
+            # print(lhs_name, lscore, rscore, rhs_name)
+            if int(lscore) < int(rscore):
+                self.add_edge(rhs_name, lhs_name)  # From LOSER to WINNER -> Changed to WINNER to LOSER!
             else:
                 self.add_edge(lhs_name, rhs_name)
         return self.games_graph
@@ -95,16 +96,16 @@ class Graph:
             if first_for:
                 first_for = False
                 continue
-            print(hamilton_path_team_names)
+            # print(hamilton_path_team_names)
             v1 = hamilton_path_team_names[0]
             vn = hamilton_path_team_names[-1]
             if v1 in to_teams:  # Edge From new node to v1 -> add new v in the beginning of path
                 hamilton_path_team_names.insert(0, new_team_name)
-                print(new_team_name, "aaaa")
+                # print(new_team_name, "aaaa")
                 continue
             if new_team_name in self.games_graph[vn]:  # Edge From vn to new node -> add new v in the end of path
                 hamilton_path_team_names.append(new_team_name)
-                print(new_team_name, "bbbb")
+                # print(new_team_name, "bbbb")
                 continue
 
             path_index = dict()
@@ -122,7 +123,8 @@ class Graph:
         self.hamilton_path_team_names = hamilton_path_team_names
         print(hamilton_path_team_names)
 
-    def truncate(self, s):
+    @staticmethod
+    def truncate(s):
         return (s[:9] + '.') if len(s) > 9 else s
 
     def draw_graph(self):
